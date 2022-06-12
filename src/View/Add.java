@@ -4,20 +4,24 @@
  */
 package View;
 
+import App.Connect;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.MongoIterable;
 import App.RoundedPanel;
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.geom.RoundRectangle2D;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 import javax.swing.JOptionPane;
+import java.util.Random;
+import org.bson.Document;
+import org.bson.types.ObjectId;
 /**
  *
  * @author LENOVO
  */
 public class Add extends javax.swing.JFrame {
-
+    MainActivity main = new MainActivity();
     /**
      * Creates new form Tambah
      */
@@ -45,19 +49,13 @@ public class Add extends javax.swing.JFrame {
         RoundPanel = new RoundedPanel(25, new Color(0, 0, 0, 50));
         welcomeJL = new javax.swing.JLabel();
         usernameJL = new javax.swing.JLabel();
-        passwordJL = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         AddBtn = new App.ButtonGradient();
-        namaUmkm = new javax.swing.JTextField();
-        passwordJL1 = new javax.swing.JLabel();
+        namaBuku = new javax.swing.JTextField();
         passwordJL2 = new javax.swing.JLabel();
-        jenisUmkm = new javax.swing.JComboBox<>();
-        bidangUmkm = new javax.swing.JComboBox<>();
         passwordJL3 = new javax.swing.JLabel();
-        namaPemilik = new javax.swing.JTextField();
-        alamatUmkm = new javax.swing.JTextField();
-        passwordJL4 = new javax.swing.JLabel();
-        kotaKab = new javax.swing.JComboBox<>();
+        genreTxt = new javax.swing.JTextField();
+        hargaTxt = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new Color(0, 0, 0, 0)
@@ -84,11 +82,7 @@ public class Add extends javax.swing.JFrame {
 
         usernameJL.setFont(new java.awt.Font("Cantarell", 1, 14)); // NOI18N
         usernameJL.setForeground(new java.awt.Color(239, 239, 239));
-        usernameJL.setText("Nama UMKM");
-
-        passwordJL.setFont(new java.awt.Font("Cantarell", 1, 14)); // NOI18N
-        passwordJL.setForeground(new java.awt.Color(239, 239, 239));
-        passwordJL.setText("Jenis UMKM");
+        usernameJL.setText("Nama Buku");
 
         jLabel5.setFont(new java.awt.Font("Cantarell", 1, 14)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
@@ -104,80 +98,43 @@ public class Add extends javax.swing.JFrame {
             }
         });
 
-        namaUmkm.setBackground(new Color(0, 0, 0, 0));
-        namaUmkm.setFont(new java.awt.Font("Gadugi", 1, 14)); // NOI18N
-        namaUmkm.setForeground(new java.awt.Color(255, 255, 255));
-        namaUmkm.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(0, 126, 250)));
-        namaUmkm.addActionListener(new java.awt.event.ActionListener() {
+        namaBuku.setBackground(new Color(0, 0, 0, 0));
+        namaBuku.setFont(new java.awt.Font("Gadugi", 1, 14)); // NOI18N
+        namaBuku.setForeground(new java.awt.Color(255, 255, 255));
+        namaBuku.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(0, 126, 250)));
+        namaBuku.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                namaUmkmActionPerformed(evt);
+                namaBukuActionPerformed(evt);
             }
         });
-
-        passwordJL1.setFont(new java.awt.Font("Cantarell", 1, 14)); // NOI18N
-        passwordJL1.setForeground(new java.awt.Color(239, 239, 239));
-        passwordJL1.setText("Bidang UMKM");
 
         passwordJL2.setFont(new java.awt.Font("Cantarell", 1, 14)); // NOI18N
         passwordJL2.setForeground(new java.awt.Color(239, 239, 239));
-        passwordJL2.setText("Nama Pemilik");
-
-        jenisUmkm.setBackground(new Color(0, 0, 0, 0)
-        );
-        jenisUmkm.setFont(new java.awt.Font("Gadugi", 1, 14)); // NOI18N
-        jenisUmkm.setForeground(new java.awt.Color(255, 255, 255));
-        jenisUmkm.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-- Pilih --", "Usaha Mikro", "Usaha Kecil", "Usaha Menengah" }));
-        jenisUmkm.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(0, 126, 250)));
-        jenisUmkm.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-
-        bidangUmkm.setBackground(new Color(0, 0, 0, 0)
-        );
-        bidangUmkm.setFont(new java.awt.Font("Gadugi", 1, 14)); // NOI18N
-        bidangUmkm.setForeground(new java.awt.Color(255, 255, 255));
-        bidangUmkm.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-- Pilih --", "Makanan/Minuman", "Fashion", "Kesehatan", "Jasa", "Elektronik", "Aksesoris/Kosmetik", "Perlengkapan Rumah Tangga", "Besi/Bahan Bangunan", "Furniture/Int/Eksterior", "Peternakan", "Hasil Tani", "Lembaga Keuangan" }));
-        bidangUmkm.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(0, 126, 250)));
-        bidangUmkm.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        bidangUmkm.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bidangUmkmActionPerformed(evt);
-            }
-        });
+        passwordJL2.setText("Genre");
 
         passwordJL3.setFont(new java.awt.Font("Cantarell", 1, 14)); // NOI18N
         passwordJL3.setForeground(new java.awt.Color(239, 239, 239));
-        passwordJL3.setText("Alamat UMKM");
+        passwordJL3.setText("Harga");
 
-        namaPemilik.setBackground(new Color(0, 0, 0, 0));
-        namaPemilik.setFont(new java.awt.Font("Gadugi", 1, 14)); // NOI18N
-        namaPemilik.setForeground(new java.awt.Color(255, 255, 255));
-        namaPemilik.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(0, 126, 250)));
-        namaPemilik.addActionListener(new java.awt.event.ActionListener() {
+        genreTxt.setBackground(new Color(0, 0, 0, 0));
+        genreTxt.setFont(new java.awt.Font("Gadugi", 1, 14)); // NOI18N
+        genreTxt.setForeground(new java.awt.Color(255, 255, 255));
+        genreTxt.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(0, 126, 250)));
+        genreTxt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                namaPemilikActionPerformed(evt);
+                genreTxtActionPerformed(evt);
             }
         });
 
-        alamatUmkm.setBackground(new Color(0, 0, 0, 0));
-        alamatUmkm.setFont(new java.awt.Font("Gadugi", 1, 14)); // NOI18N
-        alamatUmkm.setForeground(new java.awt.Color(255, 255, 255));
-        alamatUmkm.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(0, 126, 250)));
-        alamatUmkm.addActionListener(new java.awt.event.ActionListener() {
+        hargaTxt.setBackground(new Color(0, 0, 0, 0));
+        hargaTxt.setFont(new java.awt.Font("Gadugi", 1, 14)); // NOI18N
+        hargaTxt.setForeground(new java.awt.Color(255, 255, 255));
+        hargaTxt.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(0, 126, 250)));
+        hargaTxt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                alamatUmkmActionPerformed(evt);
+                hargaTxtActionPerformed(evt);
             }
         });
-
-        passwordJL4.setFont(new java.awt.Font("Cantarell", 1, 14)); // NOI18N
-        passwordJL4.setForeground(new java.awt.Color(239, 239, 239));
-        passwordJL4.setText("Kota/Kabupaten");
-
-        kotaKab.setBackground(new Color(0, 0, 0, 0)
-        );
-        kotaKab.setFont(new java.awt.Font("Gadugi", 1, 14)); // NOI18N
-        kotaKab.setForeground(new java.awt.Color(255, 255, 255));
-        kotaKab.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-- Pilih --", "Kabupaten Tegal", "Kota Tegal" }));
-        kotaKab.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(0, 126, 250)));
-        kotaKab.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         javax.swing.GroupLayout RoundPanelLayout = new javax.swing.GroupLayout(RoundPanel);
         RoundPanel.setLayout(RoundPanelLayout);
@@ -185,32 +142,17 @@ public class Add extends javax.swing.JFrame {
             RoundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(RoundPanelLayout.createSequentialGroup()
                 .addGap(50, 50, 50)
-                .addGroup(RoundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(RoundPanelLayout.createSequentialGroup()
-                        .addComponent(passwordJL4)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, RoundPanelLayout.createSequentialGroup()
-                        .addGroup(RoundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(kotaKab, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(namaUmkm, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, RoundPanelLayout.createSequentialGroup()
-                                .addGroup(RoundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(passwordJL1)
-                                    .addComponent(bidangUmkm, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)
-                                .addGroup(RoundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(passwordJL)
-                                    .addComponent(jenisUmkm, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addComponent(namaPemilik, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(AddBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(alamatUmkm, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, RoundPanelLayout.createSequentialGroup()
-                                .addGroup(RoundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(passwordJL3)
-                                    .addComponent(usernameJL)
-                                    .addComponent(passwordJL2))
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addGap(50, 50, 50))))
+                .addGroup(RoundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(namaBuku, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(genreTxt, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(hargaTxt, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, RoundPanelLayout.createSequentialGroup()
+                        .addGroup(RoundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(passwordJL3)
+                            .addComponent(usernameJL)
+                            .addComponent(passwordJL2))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addGap(50, 50, 50))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, RoundPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(RoundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -220,6 +162,10 @@ public class Add extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, RoundPanelLayout.createSequentialGroup()
                         .addComponent(welcomeJL)
                         .addGap(188, 188, 188))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, RoundPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(AddBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(40, 40, 40))
         );
         RoundPanelLayout.setVerticalGroup(
             RoundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -231,30 +177,18 @@ public class Add extends javax.swing.JFrame {
                 .addGap(22, 22, 22)
                 .addComponent(usernameJL)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(namaUmkm, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(namaBuku, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(passwordJL2)
                 .addGap(4, 4, 4)
-                .addComponent(namaPemilik, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(genreTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(RoundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(passwordJL1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(passwordJL, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(RoundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bidangUmkm, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jenisUmkm, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(23, 23, 23)
                 .addComponent(passwordJL3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(alamatUmkm, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(passwordJL4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(kotaKab, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(41, 41, 41)
+                .addComponent(hargaTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 204, Short.MAX_VALUE)
                 .addComponent(AddBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(64, Short.MAX_VALUE))
+                .addGap(54, 54, 54))
         );
 
         javax.swing.GroupLayout kGradientPanel1Layout = new javax.swing.GroupLayout(kGradientPanel1);
@@ -277,7 +211,7 @@ public class Add extends javax.swing.JFrame {
                 .addComponent(CloseBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(RoundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 597, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(41, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -301,55 +235,72 @@ public class Add extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_CloseBtnMousePressed
 
+    private void hargaTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hargaTxtActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_hargaTxtActionPerformed
+
+    private void genreTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genreTxtActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_genreTxtActionPerformed
+
+    private void namaBukuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_namaBukuActionPerformed
+        // TODO add your handling code here:
+        if (namaBuku.getText().isEmpty()) {
+            namaBuku.requestFocus();
+        }else{
+            //            loginProcess();
+        }
+    }//GEN-LAST:event_namaBukuActionPerformed
+
     private void AddBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddBtnActionPerformed
         // TODO add your handling code here:
-        String nama_umkm = namaUmkm.getText();
-        String pemilik = namaPemilik.getText();
-        String bidang = bidangUmkm.getSelectedItem().toString();
-        String jenis = jenisUmkm.getSelectedItem().toString();
-        String alamat = alamatUmkm.getText();
-        String kota_kab = kotaKab.getSelectedItem().toString();
+        String nama_buku = namaBuku.getText();
+        String genre = genreTxt.getText();
+        String harga = hargaTxt.getText();
         
-        if (nama_umkm.isEmpty() || pemilik.isEmpty() || bidang.isEmpty() || jenis.isEmpty() || alamat.isEmpty() || kota_kab.isEmpty()) {
+        if (nama_buku.isEmpty() || genre.isEmpty() || harga.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please complete the data according to the table!");
             this.requestFocus();
         }else{
-//            try {
-//                Connection c = Connect.MySQl();
-//                Statement st = c.createStatement();
-//                String query = "INSERT INTO umkm (nama_umkm, jenis_umkm, bidang_umkm, pemilik_umkm, alamat_umkm, kota_kabupaten) VALUES ('"+nama_umkm+"','"+jenis+"','"+bidang+"','"+pemilik+"','"+alamat+"','"+kota_kab+"')";
-//                st.executeUpdate(query);
-//                JOptionPane.showMessageDialog(this, "Data added successfully");
-//                MainActivity main = new MainActivity();
-//                main.loadData("");
-//                this.dispose();
-//            } catch (SQLException e) {
-//                JOptionPane.showMessageDialog(this, e.getMessage());
-//            }
+            Random rand = new Random();
+            Document buku = new Document("_id", new ObjectId());
+            buku.append("book_name", nama_buku)
+                   .append("genre", genre)
+                   .append("price", harga);
+            System.out.println(buku);
+             MongoDatabase db = Connect.connectDB();
+//                MongoIterable<String> tables = db.listCollectionNames();                
+                MongoCollection<Document> coll = db.getCollection("book_list");
+            coll.insertOne(buku);
+            main.loadData("");
+            JOptionPane.showMessageDialog(this, "Data added successfully");
+            this.dispose();
+//        String nama_umkm = namaBuku.getText();
+//        String pemilik = genreTxt.getText();
+//        String bidang = bidangUmkm.getSelectedItem().toString();
+//        String jenis = jenisUmkm.getSelectedItem().toString();
+//        String alamat = hargaTxt.getText();
+//        String kota_kab = kotaKab.getSelectedItem().toString();
+//
+//        if (nama_umkm.isEmpty() || pemilik.isEmpty() || bidang.isEmpty() || jenis.isEmpty() || alamat.isEmpty() || kota_kab.isEmpty()) {
+//            JOptionPane.showMessageDialog(this, "Please complete the data according to the table!");
+//            this.requestFocus();
+//        }else{
+            //            try {
+                //                Connection c = Connect.MySQl();
+                //                Statement st = c.createStatement();
+                //                String query = "INSERT INTO umkm (nama_umkm, jenis_umkm, bidang_umkm, pemilik_umkm, alamat_umkm, kota_kabupaten) VALUES ('"+nama_umkm+"','"+jenis+"','"+bidang+"','"+pemilik+"','"+alamat+"','"+kota_kab+"')";
+                //                st.executeUpdate(query);
+                //                JOptionPane.showMessageDialog(this, "Data added successfully");
+                //                MainActivity main = new MainActivity();
+                //                main.loadData("");
+                //                this.dispose();
+                //            } catch (SQLException e) {
+                //                JOptionPane.showMessageDialog(this, e.getMessage());
+                //            }
 
         }
     }//GEN-LAST:event_AddBtnActionPerformed
-
-    private void namaUmkmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_namaUmkmActionPerformed
-        // TODO add your handling code here:
-        if (namaUmkm.getText().isEmpty()) {
-            namaUmkm.requestFocus();
-        }else{
-//            loginProcess();
-        }
-    }//GEN-LAST:event_namaUmkmActionPerformed
-
-    private void bidangUmkmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bidangUmkmActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_bidangUmkmActionPerformed
-
-    private void namaPemilikActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_namaPemilikActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_namaPemilikActionPerformed
-
-    private void alamatUmkmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alamatUmkmActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_alamatUmkmActionPerformed
 
     /**
      * @param args the command line arguments
@@ -391,19 +342,13 @@ public class Add extends javax.swing.JFrame {
     private App.ButtonGradient AddBtn;
     private javax.swing.JLabel CloseBtn;
     private javax.swing.JPanel RoundPanel;
-    private javax.swing.JTextField alamatUmkm;
-    private javax.swing.JComboBox<String> bidangUmkm;
+    private javax.swing.JTextField genreTxt;
+    private javax.swing.JTextField hargaTxt;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JComboBox<String> jenisUmkm;
     private keeptoo.KGradientPanel kGradientPanel1;
-    private javax.swing.JComboBox<String> kotaKab;
-    private javax.swing.JTextField namaPemilik;
-    private javax.swing.JTextField namaUmkm;
-    private javax.swing.JLabel passwordJL;
-    private javax.swing.JLabel passwordJL1;
+    private javax.swing.JTextField namaBuku;
     private javax.swing.JLabel passwordJL2;
     private javax.swing.JLabel passwordJL3;
-    private javax.swing.JLabel passwordJL4;
     private javax.swing.JLabel usernameJL;
     private javax.swing.JLabel welcomeJL;
     // End of variables declaration//GEN-END:variables

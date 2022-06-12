@@ -9,6 +9,8 @@ import App.Resources;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.MongoIterable;
+import static com.mongodb.client.model.Filters.eq;
 import java.awt.Color;
 import java.awt.geom.RoundRectangle2D;
 import javax.swing.JLabel;
@@ -16,6 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 import java.awt.BorderLayout;
+import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileWriter;
@@ -39,7 +42,7 @@ public final class MainActivity extends javax.swing.JFrame {
         setIcon();
         initComponents();
         
-        Object[] header = {"NO", "Nama Buku","Genre Buku","Harga Buku"};
+        Object[] header = {"NO", "ID", "Nama Buku","Genre Buku","Harga Buku"};
         model = new DefaultTableModel(header, 0);
         DataTabel.setModel(model);
         DataTabel.setBackground(Color.decode("#050A30"));
@@ -110,6 +113,11 @@ public final class MainActivity extends javax.swing.JFrame {
         Dasboard.setToolTipText("");
         Dasboard.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 12, 1, 1));
         Dasboard.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        Dasboard.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                DasboardMousePressed(evt);
+            }
+        });
         panelBorder1.add(Dasboard, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, 160, 40));
 
         AddData.setBackground(new Color(255, 255, 255, 50)
@@ -539,13 +547,14 @@ public final class MainActivity extends javax.swing.JFrame {
     private void DeleteDataMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DeleteDataMousePressed
 //        // TODO add your handling code here:
 //        
-//        int r = DataTabel.getSelectedRow();
-//        if (r != -1) {
-//            int id = Integer.parseInt(DataTabel.getValueAt(r, 1).toString());
-//            int pilih = JOptionPane.showConfirmDialog(this,""
-//                + "Apakah anda yakin ?","Konfirmasi",
-//                JOptionPane.YES_NO_OPTION);
-//            if (pilih == 0) {
+        int r = DataTabel.getSelectedRow();
+        if (r != -1) {
+            String id = (String) DataTabel.getValueAt(r, 2);
+            System.out.println(id);
+            int pilih = JOptionPane.showConfirmDialog(this,""
+                + "Apakah anda yakin ?","Konfirmasi",
+                JOptionPane.YES_NO_OPTION);
+            if (pilih == 0) {
 //                try {
 //                    Connection c = Connect.MySQl();
 //                    Statement st = c.createStatement();
@@ -556,10 +565,26 @@ public final class MainActivity extends javax.swing.JFrame {
 //                } catch (SQLException e) {
 //                    JOptionPane.showMessageDialog(this, e.getMessage());
 //                }
-//            }
-//        } else {
-//        
-//        }
+
+                String idBuku = "";
+                try {
+                    MongoDatabase db = Connect.connectDB();
+                    MongoIterable<String> tables = db.listCollectionNames();
+                    
+                    MongoCollection<Document> coll = db.getCollection("book_list");
+                    Document doc = coll.findOneAndDelete(eq("book_name",id));
+                    
+                    loadData("");
+                    JOptionPane.showMessageDialog(this, "Data telah dihapus");
+                    
+                    } catch (HeadlessException e) {
+                        JOptionPane.showMessageDialog(this, e.getMessage());
+                    }
+            }else{
+                JOptionPane.showMessageDialog(this, "Data gagal dihapus");
+            }
+        } else {
+        }
     }//GEN-LAST:event_DeleteDataMousePressed
 
     private void searchTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchTextKeyReleased
@@ -571,6 +596,11 @@ public final class MainActivity extends javax.swing.JFrame {
             loadData(key);
         }
     }//GEN-LAST:event_searchTextKeyReleased
+
+    private void DasboardMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DasboardMousePressed
+        // TODO add your handling code here:
+        loadData("");
+    }//GEN-LAST:event_DasboardMousePressed
 
     /**
      * @param args the command line arguments
@@ -665,6 +695,9 @@ public final class MainActivity extends javax.swing.JFrame {
     
     public void loadData(String key) {
         try {
+            Object[] kolom = {"NO", "ID", "Nama Buku","Genre Buku","Harga Buku"};
+            model = new DefaultTableModel(null, kolom);
+            DataTabel.setModel(model);
             int no = 0, fiksi = 0, nonFiksi = 0;
             
             MongoDatabase database = Connect.connectDB();
@@ -672,11 +705,13 @@ public final class MainActivity extends javax.swing.JFrame {
 //            MongoIterable<Document> data = coll.find();
             MongoCursor<Document> cursor = coll.find().iterator();
             while (cursor.hasNext()) {
+                Document obj = (Document) cursor.next();
                 no++;
-                String name_book = new String(cursor.next().get("book_name").toString());
-                String genre = new String(cursor.next().get("genre").toString());
-                String price = new String(cursor.next().get("price").toString());
-                Object[] data = {no, name_book, genre, price};
+                String id = (String) obj.getObjectId("_id").toString();
+                String name_book = (String) obj.get("book_name");
+                String genre = (String) obj.get("genre");
+                String price = (String) obj.get("price");
+                Object[] data = {no, id, name_book, genre, price};
                 int totalData = data.length-1;
                 model.addRow(data);
                 System.out.println(name_book);
