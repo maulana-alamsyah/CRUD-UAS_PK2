@@ -20,6 +20,10 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.BorderLayout;
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.io.File;
 import java.io.FileWriter;
 import javax.swing.JFileChooser;
@@ -41,6 +45,17 @@ public final class MainActivity extends javax.swing.JFrame {
         setUndecorated(true);
         setIcon();
         initComponents();
+        addWindowFocusListener(new WindowFocusListener() {
+            @Override
+            public void windowGainedFocus(WindowEvent e) {
+                loadData("");
+            }
+
+            @Override
+            public void windowLostFocus(WindowEvent e) {
+                System.out.println("tidak fokus");
+            }
+        });
         
         Object[] header = {"NO", "ID", "Nama Buku","Genre Buku","Harga Buku"};
         model = new DefaultTableModel(header, 0);
@@ -444,6 +459,7 @@ public final class MainActivity extends javax.swing.JFrame {
    
         Add plus = new Add();
         plus.setVisible(true);
+        this.loadData("");
     }//GEN-LAST:event_AddDataMousePressed
 
     private void UpdateDataMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_UpdateDataMousePressed
@@ -696,8 +712,8 @@ public final class MainActivity extends javax.swing.JFrame {
     public void loadData(String key) {
         try {
             Object[] kolom = {"NO", "ID", "Nama Buku","Genre Buku","Harga Buku"};
-            model = new DefaultTableModel(null, kolom);
-            DataTabel.setModel(model);
+            this.model = new DefaultTableModel(null, kolom);
+            this.DataTabel.setModel(model);
             int no = 0, fiksi = 0, nonFiksi = 0;
             
             MongoDatabase database = Connect.connectDB();
@@ -714,9 +730,10 @@ public final class MainActivity extends javax.swing.JFrame {
                 Object[] data = {no, id, name_book, genre, price};
                 int totalData = data.length-1;
                 model.addRow(data);
-                System.out.println(name_book);
+                
             }
         } catch (Exception e) {
         }
+        System.out.println("ini load data");
     }
 }

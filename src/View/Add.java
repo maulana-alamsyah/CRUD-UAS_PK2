@@ -267,13 +267,12 @@ public class Add extends javax.swing.JFrame {
             buku.append("book_name", nama_buku)
                    .append("genre", genre)
                    .append("price", harga);
-            System.out.println(buku);
              MongoDatabase db = Connect.connectDB();
 //                MongoIterable<String> tables = db.listCollectionNames();                
                 MongoCollection<Document> coll = db.getCollection("book_list");
             coll.insertOne(buku);
-            main.loadData("");
             JOptionPane.showMessageDialog(this, "Data added successfully");
+            main.loadData("");
             this.dispose();
 //        String nama_umkm = namaBuku.getText();
 //        String pemilik = genreTxt.getText();
